@@ -1,0 +1,102 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type OneUserResponse {
+  firstName: String!
+  lastName: String!
+  username: String
+  email: String!
+  password: String!
+  gender: GenderTypes!
+  phone: String
+  confirmEmail: DateTime
+  confirmEmailOTP: String
+  DOB: DateTime
+  address: String
+  changeCredentialTime: DateTime
+  role: RoleTypes!
+  createdAt: DateTime!
+  updatedAt: DateTime
+}
+
+enum GenderTypes {
+  male
+  female
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum RoleTypes {
+  user
+  admin
+}
+
+type OneProductResponse {
+  _id: ID!
+  name: String!
+  categoryId: ID!
+  color: [String!]!
+  createdAt: DateTime!
+  createdBy: OneUserResponse!
+}
+
+type IOrderProductResponse {
+  _id: ID!
+  finalPrice: Float!
+  name: String!
+  quantity: Float!
+  unitPrice: Float!
+  productId: OneProductResponse!
+}
+
+type OneOrderResponse {
+  _id: ID!
+  address: String!
+  note: String
+  orderId: String!
+  createdBy: OneUserResponse!
+  createdAt: DateTime
+  discountAmount: Float
+  updatedBy: ID
+  updatedAt: DateTime
+  paidAt: DateTime
+  rejectedReason: String
+  intentId: String
+  status: OrderStatus!
+  subTotal: Float!
+  finalPrice: Float!
+  paymentMethod: PaymentMethod!
+  phone: String!
+  products: [IOrderProductResponse!]!
+}
+
+enum OrderStatus {
+  pending
+  placed
+  onWay
+  delivered
+  cancelled
+  accepted
+}
+
+enum PaymentMethod {
+  cash
+  Card
+}
+
+type Query {
+  """hi hi"""
+  testQuery: String!
+}
+
+type Mutation {
+  listProducts(filterOrder: FilterOrderDto): [OneOrderResponse!]!
+}
+
+input FilterOrderDto {
+  status: OrderStatus
+}
