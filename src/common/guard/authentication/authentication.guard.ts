@@ -1,72 +1,3 @@
-// import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-// import { GqlExecutionContext } from '@nestjs/graphql';
-// import { Request } from 'express';
-// // import { Request } from 'express';
-// import { Observable } from 'rxjs';
-// import { TokenService } from 'src/common/service/token.service';
-// import { UserDocument } from 'src/DB/model/User.model.js';
-
-// export interface IAuthReq extends Request {
-//   user: UserDocument;
-// }
-
-// @Injectable()
-// export class AuthenticationGuard implements CanActivate {
-//   constructor(private readonly tokenService: TokenService) {}
-//   async canActivate(context: ExecutionContext): Promise<boolean> {
-//     try {
-//       let authorization: string | undefined;
-//     let token: string | undefined;
-//     let req: IAuthReq;
-//       switch (context.getType() as string) {
-//         case 'ws': {
-//           authorization =
-//             context.switchToWs().getClient().handshake?.headers
-//               ?.authorization ||
-//             context.switchToWs().getClient().handshake?.auth?.authorization;
-//           console.log({ client: authorization });
-//           context.switchToWs().getClient().user =
-//             await this.tokenService.verify({
-//               authorization,
-//             });
-//           // لو عندك توكن من ال client حطه هنا
-//           break;
-//         }
-//         case 'http': {
-//           const req = context.switchToHttp().getRequest<IAuthReq>();
-//           authorization = req.headers.authorization;
-
-//           if (!authorization) return false;
-
-//           req.user = await this.tokenService.verify({ authorization });
-//           break;
-//         }
-
-//         case 'graphql' : {
-//           authorization =
-//             GqlExecutionContext.create(context).getContext().req.headers
-//               .authorization;
-//           GqlExecutionContext.create(context).getContext().req.user =
-//             await this.tokenService.verify({authorization})
-
-//         //  console.log(ctx);
-//           break;
-//         }
-
-
-//         default:
-//           return false;
-//       }
-//   if (!authorization) return false;
-//       console.log({ GUser: context.switchToHttp().getRequest().user });
-//       return true;
-//     } catch (error) {
-//       console.error('Token verification failed:', error.message);
-//       return false;
-//     }
-//   }
-// }
-///////////////////////////////////
 import {
   CanActivate,
   ExecutionContext,
@@ -120,7 +51,6 @@ export class AuthenticationGuard implements CanActivate {
     return true;
   }
 }
-
 
 ///////////////////////////////////////////
 

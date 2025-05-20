@@ -1,5 +1,3 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import {
   FilterQuery,
   Model,
@@ -7,8 +5,6 @@ import {
   Types,
   UpdateWriteOpResult,
 } from 'mongoose';
-import { User, UserDocument } from '../model/User.model.js';
-
 
 export interface IPaginate<T> {
   count: number;
@@ -16,7 +12,6 @@ export interface IPaginate<T> {
   pages: number;
   page: number;
   documents: T[] | [];
-
 }
 export abstract class DatabaseRepository<TDocument> {
   protected constructor(protected readonly model: Model<TDocument>) {}
@@ -57,7 +52,7 @@ export abstract class DatabaseRepository<TDocument> {
     filter: FilterQuery<TDocument>;
     data: any;
   }): Promise<TDocument | null> {
-    return await this.model.findOneAndUpdate(filter, data,{new: true} );
+    return await this.model.findOneAndUpdate(filter, data, { new: true });
   }
   async find({
     filter,
@@ -94,11 +89,10 @@ export abstract class DatabaseRepository<TDocument> {
     const documents = await query.skip(skip).limit(limit).exec();
     return {
       count,
-      pageSize: limit, 
+      pageSize: limit,
       pages,
       page,
       documents,
     };
-    // return await this.model.find(filter || {}).populate(populate || []);
   }
 }

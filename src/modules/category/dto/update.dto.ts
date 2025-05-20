@@ -4,16 +4,11 @@ import {
   IsString,
   MaxLength,
   MinLength,
-  Validate,
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { QueryFilterDto } from 'src/common/dto/query.filter.dto';
 
-export class  CategoryId {
-  // @Validate((input: CategoryId) => {
-  //   return Types.ObjectId.isValid(input.categoryId);
-  // })
-
+export class CategoryId {
   @IsMongoId()
   categoryId: Types.ObjectId;
 }
@@ -23,7 +18,6 @@ export class updateCategoryDto {
   @MaxLength(50)
   @IsOptional()
   name: string;
-  // slug?: string;
 }
 export class CategoryFilterQueryDto extends QueryFilterDto {
   @IsString()

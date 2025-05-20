@@ -1,7 +1,5 @@
 import { Types } from 'mongoose';
 import { IAttachmentTypes } from 'src/common/multer/cloud.service';
-import { UserDocument } from 'src/DB/model/User.model';
-import { ICategory } from '../category/category.interface';
 import { IUser } from '../user/user.interface';
 
 export enum Size {
@@ -16,14 +14,13 @@ export class IProductInput {
   description: string;
   stock: number;
   originalPrice: number;
-  discountPercent?: number; 
+  discountPercent?: number;
   size?: Size[];
   color?: string;
 
-  categoryId: Types.ObjectId ;
+  categoryId: Types.ObjectId;
 }
 export class IProduct extends IProductInput {
-  // _id?: Types.ObjectId;
   slug: string;
   finalPrice: number;
 

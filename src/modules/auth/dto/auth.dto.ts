@@ -2,14 +2,11 @@ import {
   IsEmail,
   IsString,
   IsStrongPassword,
+  Length,
   MaxLength,
   MinLength,
-  Validate,
-  validate,
-  ValidateIf,
 } from 'class-validator';
 import { IsMatchPassword } from 'src/common/pipes/decorators/password.custom.decorator';
-// import { isMatchPassword } from 'src/common/pipes/decorators/password.custom.decorator';
 
 export class CreateAccountParamDTO {
   @MinLength(2)
@@ -32,26 +29,11 @@ export class CreateAccountDto extends LoginDto {
   })
   confirmPassword: string;
 }
+export class ConfirmEmailDto {
+  @IsEmail()
+  email: string;
 
-// import {
-//     IsEmail,
-//     IsOptional,
-//     IsString,
-//     IsStrongPassword,
-//     MaxLength,
-//     MinLength,
-//   } from 'class-validator';
-
-// export class CreateAccountDto {
-//   @IsString({ message: 'please provide username' })
-//   @MinLength(2)
-//   @MaxLength(20)
-//   username: string;
-//   @IsEmail()
-// //   @IsOptional()
-//   email: string;
-//   @IsStrongPassword()
-//   password: string;
-//   @IsStrongPassword()
-//   confirmPassword: string;
-// }
+  @IsString()
+  @Length(6, 6)
+  otp: string;
+}

@@ -1,18 +1,15 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
   Param,
-  Delete,
   UsePipes,
   ValidationPipe,
   Req,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto, OrderIdDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { User } from 'src/common/decorators/user.decorator';
 import { RoleTypes, UserDocument } from 'src/DB/model/User.model';
@@ -44,9 +41,4 @@ export class OrderController {
   cancelOrder(@User() user: UserDocument, @Param() params: OrderIdDto) {
     return this.orderService.cancelOrder(user, params.orderId);
   }
-  
-
-
-
-  
 }

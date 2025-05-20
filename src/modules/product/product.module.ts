@@ -6,13 +6,9 @@ import { CategoryRepositoryService } from 'src/DB/repository/Category.repository
 import { categoryModel } from 'src/DB/model/category.model';
 import { ProductModel } from 'src/DB/model/Product.model';
 import { CloudService } from 'src/common/multer/cloud.service';
-// import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [categoryModel, ProductModel,
-    // CacheModule
-
-  ],
+  imports: [categoryModel, ProductModel],
   controllers: [ProductController],
   providers: [
     ProductService,

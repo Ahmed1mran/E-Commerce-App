@@ -21,7 +21,6 @@ export class CloudService {
     });
   }
   async uploadFile(
-    // file: Express.Multer.File,
     path: string,
     options?: UploadApiOptions,
   ): Promise<UploadApiResponse> {
@@ -33,7 +32,7 @@ export class CloudService {
     files: Express.Multer.File[],
     options?: UploadApiOptions,
   ): Promise<IAttachmentTypes[] | []> {
-    let attachments: IAttachmentTypes[] = [];
+    const attachments: IAttachmentTypes[] = [];
     for (const file of files) {
       const { secure_url, public_id } = await this.uploadFile(
         file.path,

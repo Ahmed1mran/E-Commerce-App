@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Delete } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { Auth } from 'src/common/decorators/auth.decorator';
-import { RoleTypes , UserDocument } from 'src/DB/model/User.model';
+import { RoleTypes, UserDocument } from 'src/DB/model/User.model';
 import { User } from 'src/common/decorators/user.decorator';
 import { AddToCartDto } from './dto/create-cart.dto';
 import { ItemIdsDto } from './dto/update-cart.dto';
@@ -33,5 +33,3 @@ export class CartController {
     return this.cartService.getCart(user);
   }
 }
-
-

@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, IsPositive, IsString, MinLength } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class QueryFilterDto {
   @IsString()
@@ -10,11 +16,10 @@ export class QueryFilterDto {
   @MinLength(1)
   @IsOptional()
   sort?: string;
-  
-  @Type(() => Number)  
+
+  @Type(() => Number)
   @IsNumber()
   @IsPositive()
   @IsOptional()
   page?: number;
-
 }

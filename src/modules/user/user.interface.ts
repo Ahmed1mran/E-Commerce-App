@@ -1,4 +1,4 @@
-import { GenderTypes, RoleTypes } from "src/DB/model/User.model";
+import { GenderTypes, RoleTypes } from 'src/DB/model/User.model';
 
 export interface IUser {
   username?: string;
@@ -19,8 +19,6 @@ export interface IUser {
   confirmEmail?: Date;
   confirmEmailOTP?: string;
 
-    createdAt?: Date;
-    updatedAt?: Date;
-
-//   otp: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

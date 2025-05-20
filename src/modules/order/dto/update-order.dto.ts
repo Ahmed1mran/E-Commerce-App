@@ -13,5 +13,4 @@ export class FilterOrderDto {
   @MinLength(3)
   @IsOptional()
   status?: OrderStatus;
-
 }

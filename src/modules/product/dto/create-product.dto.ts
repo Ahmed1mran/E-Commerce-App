@@ -2,7 +2,6 @@ import {
   IsArray,
   IsMongoId,
   IsNumber,
-  IsNumberString,
   IsOptional,
   IsPositive,
   IsString,
@@ -11,7 +10,6 @@ import {
 } from 'class-validator';
 import { IProductInput, Size } from '../product.interface';
 import { Types } from 'mongoose';
-import { ICategory } from 'src/modules/category/category.interface';
 import { Type } from 'class-transformer';
 
 export class CreateProductFilesDto {
@@ -47,7 +45,7 @@ export class CreateProductDto implements IProductInput {
   @IsOptional()
   discountPercent?: number;
   @IsMongoId()
-  categoryId: Types.ObjectId ;
+  categoryId: Types.ObjectId;
 
   @IsArray()
   @IsOptional()

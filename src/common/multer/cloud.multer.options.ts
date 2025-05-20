@@ -1,6 +1,6 @@
-import { BadRequestException } from "@nestjs/common";
-import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
-import { diskStorage } from "multer";
+import { BadRequestException } from '@nestjs/common';
+import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
+import { diskStorage } from 'multer';
 export const attachmentValidation = {
   image: ['image/gif', 'image/jpeg', 'image/png'],
   file: ['plain/text', 'application/json'],
@@ -15,7 +15,7 @@ export const multerCloudOptions = ({
 }): MulterOptions => {
   return {
     storage: diskStorage({}),
-    fileFilter: (req, file, cb) => {
+    fileFilter: (_req, file, cb) => {
       if (!fileValidators?.includes(file.mimetype)) {
         return cb(new BadRequestException('In-valid file format'), false);
       }

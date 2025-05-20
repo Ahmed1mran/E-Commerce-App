@@ -41,5 +41,4 @@ export class OneUserResponse implements Partial<IUser> {
   createdAt: Date;
   @Field(() => Date, { nullable: true })
   updatedAt?: Date;
-  //   otp?: string;
 }

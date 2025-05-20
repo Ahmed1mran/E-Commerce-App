@@ -8,7 +8,6 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { OnModuleInit, UseGuards } from '@nestjs/common';
 
 import { Server } from 'socket.io';
 import { Socket } from 'socket.io';
@@ -18,7 +17,6 @@ import {
   RoleTypes,
   UserDocument,
 } from 'src/DB/model/User.model';
-import { AuthenticationGuard } from 'src/common/guard/authentication/authentication.guard';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { Types } from 'mongoose';
 
@@ -37,15 +35,7 @@ export class RealTimeGateWay
   @WebSocketServer()
   server: Server;
 
-  // onModuleInit() {
-  //   this.server.on('connection', (socket) => {
-  //     console.log('Client connected:', socket.id);
-  //     socket.on('disconnect', () => {
-  //       console.log('Client disconnected:', socket.id);
-  //     });
-  //   });
-  // }
-  afterInit(server: Server) {
+  afterInit(_server: Server) {
     console.log('chat started');
   }
   destructAuthorization(client: Socket): string {
@@ -56,8 +46,6 @@ export class RealTimeGateWay
   }
   async handleConnection(client: Socket) {
     try {
-      // console.log('Client connected:', client.id);
-      // console.log(client);
       const authorization = this.destructAuthorization(client);
       console.log({ authorization });
       const user = await this.tokenService.verify({ authorization });
@@ -84,7 +72,6 @@ export class RealTimeGateWay
       console.log({ client });
       this.server.emit('sayHi', 'lol');
       client.emit('sayHi', 'hola');
-      // return 'Done';
     } catch (error) {
       client.emit('exception', error.message || 'fail ');
     }
@@ -92,15 +79,11 @@ export class RealTimeGateWay
 
   emitStockChanges(
     data:
-       { productId: Types.ObjectId; stock: number }
+      | { productId: Types.ObjectId; stock: number }
       | { productId: Types.ObjectId; stock: number }[],
   ) {
     try {
-      // console.log({ body });
-      // console.log({ client });
       this.server.emit('emitStockChanges', data);
-      // client.emit('sayHi', 'hola');
-      // return 'Done';
     } catch (error) {
       this.server.emit('exception', error.message || 'fail ');
     }

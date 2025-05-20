@@ -2,22 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { AddToCartDto } from './dto/create-cart.dto';
 import { UserDocument } from 'src/DB/model/User.model';
 import { ProductRepositoryService } from 'src/DB/repository/Product.repository.service copy';
-import { ProductDocument } from 'src/DB/model/Product.model';
 import { CartRepositoryService } from 'src/DB/repository/Cart.repository.service';
-import { CartDocument } from 'src/DB/model/Cart.model';
 import { ItemIdsDto } from './dto/update-cart.dto';
 import { ICart } from './cart.interface';
 
 @Injectable()
 export class CartService {
   constructor(
-    private readonly cartRepositoryService: CartRepositoryService<CartDocument>,
-    private readonly productRepositoryService: ProductRepositoryService<ProductDocument>,
+    private readonly cartRepositoryService: CartRepositoryService,
+    private readonly productRepositoryService: ProductRepositoryService,
   ) {}
   async addToCart(
     user: UserDocument,
     body: AddToCartDto,
-  ): Promise<{ message: String }> {
+  ): Promise<{ message: string }> {
     const product = await this.productRepositoryService.findOne({
       filter: {
         _id: body.productId,
@@ -31,28 +29,9 @@ export class CartService {
     const cart = await this.cartRepositoryService.findOne({
       filter: {
         createdBy: user._id,
-        // product: body.productId,
       },
     });
-    //     if (!cart) {
-    //   const newCart = await this.cartRepositoryService.create({
-    //     createdBy: user._id,
-    //     products: [{ productId: body.productId, quantity: body.quantity }],
-    //   });
-    //   return newCart;
-    // } else {
-    //   const existingProduct = cart.products.find(
-    //     (product) => product.productId.toString() === body.productId.toString(),
-    //   );
 
-    //   if (existingProduct) {
-    //     existingProduct.quantity += body.quantity;
-    //   } else {
-    //     cart.products.push({ productId: body.productId, quantity: body.quantity });
-    //   }
-
-    //   await cart.save();
-    //   return cart;
     if (!cart) {
       await this.cartRepositoryService.create({
         createdBy: user._id,
@@ -66,28 +45,19 @@ export class CartService {
         cart.products[index].quantity += body.quantity;
         match = true;
         break;
-        // await cart.save();
-        // return { message: 'Done' };
       }
-      // else {
-      //   cart.products.push(body);
-      //   await cart.save();
-      //   return { message: 'Done' };
-      // }
     }
     if (!match) {
       cart.products.push(body);
     }
     await cart.save();
     return { message: 'Done' };
-
-    // return 'This action adds a new cart';
   }
   async removeItemsFromCart(
     user: UserDocument,
     body: ItemIdsDto,
-  ): Promise<{ message: String }> {
-    const cart = await this.cartRepositoryService.updateOne({
+  ): Promise<{ message: string }> {
+     await this.cartRepositoryService.updateOne({
       filter: {
         createdBy: user._id,
       },
@@ -99,17 +69,10 @@ export class CartService {
         },
       },
     });
-    // if (!cart) {
-    //   throw new Error('Cart not found');
-    // }
-    // cart.products = cart.products.filter(
-    //   (product) => !body.productIds.includes(product.productId),
-    // );
-    // await cart.save();
     return { message: 'Done' };
   }
-  async clearCart(user: UserDocument): Promise<{ message: String }> {
-    const cart = await this.cartRepositoryService.updateOne({
+  async clearCart(user: UserDocument): Promise<{ message: string }> {
+     await this.cartRepositoryService.updateOne({
       filter: {
         createdBy: user._id,
       },
@@ -122,7 +85,7 @@ export class CartService {
   }
   async getCart(
     user: UserDocument,
-  ): Promise<{ message: String; data: { cart: ICart | null } }> {
+  ): Promise<{ message: string; data: { cart: ICart | null } }> {
     const cart = await this.cartRepositoryService.findOne({
       filter: {
         createdBy: user._id,

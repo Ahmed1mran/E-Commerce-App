@@ -1,8 +1,7 @@
 import { Types } from 'mongoose';
 import { IAttachmentTypes } from 'src/common/multer/cloud.service';
 
-
-export interface ICreateCategoryInput{
+export interface ICreateCategoryInput {
   name: string;
 }
 export interface ICategory extends ICreateCategoryInput {

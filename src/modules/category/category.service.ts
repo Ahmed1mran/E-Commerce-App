@@ -14,7 +14,6 @@ import { CategoryRepositoryService } from 'src/DB/repository/Category.repository
 import { CreateCategoryDto } from './dto/create.dto';
 import { FilterQuery, Types } from 'mongoose';
 import { CategoryFilterQueryDto, updateCategoryDto } from './dto/update.dto';
-import slugify from 'slugify';
 import { ICategory } from './category.interface';
 import { IPaginate } from 'src/DB/repository/database.repository';
 
@@ -31,23 +30,21 @@ export class CategoryService {
     file: Express.Multer.File,
   ): Promise<{ message: 'Done' }> {
     console.log({ file, body, user });
-    // console.log(file);
     const { name } = body;
 
     if (await this.categoryRepositoryService.findOne({ filter: { name } })) {
       throw new ConflictException('Category already exists');
     }
-    // const folderId = `${Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)}`;
-        const folderId = String(
-          Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
-        );
+    const folderId = String(
+      Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
+    );
     const { secure_url, public_id } = await this.cloudService.uploadFile(
       file.path,
       {
         folder: `${process.env.APP_NAME}/category/${folderId}`,
       },
     );
-    const category = await this.categoryRepositoryService.create({
+     await this.categoryRepositoryService.create({
       name,
       logo: {
         secure_url,
@@ -59,7 +56,7 @@ export class CategoryService {
     return { message: 'Done' };
   }
   async update(
-    user: UserDocument,
+    _user: UserDocument,
     categoryId: Types.ObjectId,
     body?: updateCategoryDto,
     file?: Express.Multer.File,
@@ -96,23 +93,11 @@ export class CategoryService {
       logo = { secure_url, public_id };
     }
 
-    // ✅ نولّد الـ slug يدوي قبل الإرسال
-    // if (body?.name) {
-    //   body.slug = slugify(body.name, { trim: true });
-    // }
-
     const updateCategory = await this.categoryRepositoryService.updateOne({
       filter: { _id: categoryId },
       data: {
-        // ...body,
-        // ...(logo && { logo }),
-        // body: {
-        //   name: name,
-        //   logo: logo,
-        // },
-        
-          ...(name && { name }),
-          ...(logo && { logo }),
+        ...(name && { name }),
+        ...(logo && { logo }),
       },
     });
 
@@ -137,7 +122,7 @@ export class CategoryService {
   }
   async find(query: CategoryFilterQueryDto): Promise<{
     message: string;
-    data: { categories: ICategory[] | [] |IPaginate<ICategory>};
+    data: { categories: ICategory[] | [] | IPaginate<ICategory> };
   }> {
     let filter: FilterQuery<CategoryDocument> = {};
     if (query?.name) {

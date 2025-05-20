@@ -4,10 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {
-  CreateProductDto,
-  CreateProductFilesDto,
-} from './dto/create-product.dto';
+import { CreateProductDto } from './dto/create-product.dto';
 import { UserDocument } from 'src/DB/model/User.model';
 import { CategoryRepositoryService } from 'src/DB/repository/Category.repository.service';
 import {
@@ -28,28 +25,11 @@ export class ProductService {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly cloudService: CloudService,
-    private readonly productRepositoryService: ProductRepositoryService<ProductDocument>,
+    private readonly productRepositoryService: ProductRepositoryService,
     private readonly categoryRepositoryService: CategoryRepositoryService,
   ) {}
-  async test() {
-    // let name = await this.cacheManager.get('name')
-    // if (name) {
-    // return { message: 'Done', name };
 
-    // }
-    //  name = await this.cacheManager.set('name','Imran',5000)
-    console.log('lol');
-
-    return { message: 'Done' };
-  }
   async final() {
-    // let name = await this.cacheManager.get('name')
-    // if (name) {
-    // return { message: 'Done', name };
-
-    // }
-    //  name = await this.cacheManager.set('name','Imran',5000)
-    console.log('lol');
     const k = await this.cacheManager.get('events');
     return { message: 'Done', k };
   }
@@ -57,7 +37,6 @@ export class ProductService {
   async create(
     user: UserDocument,
     body: CreateProductDto,
-    // files: CreateProductFilesDto,
     files: {
       image?: Express.Multer.File[];
       gallery?: Express.Multer.File[];
@@ -69,44 +48,34 @@ export class ProductService {
 
     const category = await this.categoryRepositoryService.findOne({
       filter: { _id: body.categoryId },
-      // populate: [{ path: 'categoryId' }],
     });
     if (!category) {
       throw new NotFoundException('In-valid productId');
     }
 
-    // let image: IAttachmentTypes;
     const folderId = `${Math.floor(Math.random() * 10000)}`;
     const { secure_url, public_id } = await this.cloudService.uploadFile(
       files.image[0].path,
       {
         folder: `${process.env.APP_NAME}/category/${category.folderId}/product/${folderId}`,
-
-        // folder: `${process.env.APP_NAME}/product/${folderId}`,
       },
     );
-    let image: IAttachmentTypes = {
+    const image: IAttachmentTypes = {
       secure_url,
       public_id,
-      // url: secure_url,
-      // public_id: public_id,
-      // folderId: folderId,
     };
     let gallery: IAttachmentTypes[] = [];
     if (files?.gallery?.length) {
       gallery = await this.cloudService.uploadFiles(files.gallery, {
         folder: `${process.env.APP_NAME}/category/${category.folderId}/product/${folderId}/gallery`,
-
-        // folder: `${process.env.APP_NAME}/product/${folderId}`,
       });
     }
-    const createProduct = await this.productRepositoryService.create({
+     await this.productRepositoryService.create({
       ...body,
       folderId,
       createdBy: user._id,
       image,
       gallery,
-      // categoryId: body.categoryId,
     });
     return { message: 'Product created successfully' };
   }
@@ -119,10 +88,6 @@ export class ProductService {
       gallery?: Express.Multer.File[];
     },
   ): Promise<{ message: string }> {
-    // if (!files.image) {
-    //   throw new BadRequestException('Image is required');
-    // }
-
     const product = await this.productRepositoryService.findOne({
       filter: { _id: productId },
       populate: [{ path: 'categoryId' }],
@@ -138,36 +103,15 @@ export class ProductService {
         throw new NotFoundException('In-valid categoryId');
       }
     }
-    // let image: IAttachmentTypes = {
-    //   secure_url,
-    //   public_id,
-    // };
-    const folderId = `${Math.floor(Math.random() * 10000)}`;
 
-    // let image: IAttachmentTypes;
-    // if (files?.image?.length) {
-    //   let { secure_url, public_id } = await this.cloudService.uploadFile(
-    //     files.image[0].path,
-    //     {
-    //       // folder: `${process.env.APP_NAME}/category/${product.categoryId['folderId']}/product/${product.folderId}/gallery`,
-    //       folder: `${process.env.APP_NAME}/product/${folderId}`,
-    //     },
-    //   );
-    //   image = {
-    //     secure_url,
-    //     public_id,
-    //   };
-    // }
-    // let image: IAttachmentTypes;
-    let image: IAttachmentTypes | null = null; // تعريف المتغير كـ null بدايةً
+    // const folderId = `${Math.floor(Math.random() * 10000)}`;
 
+    let image: IAttachmentTypes | null = null;
     if (files?.image?.length) {
-      let { secure_url, public_id } = await this.cloudService.uploadFile(
+      const { secure_url, public_id } = await this.cloudService.uploadFile(
         files.image[0].path,
         {
           folder: `${process.env.APP_NAME}/category/${product.categoryId['folderId']}/product/${product.folderId}`,
-
-          // folder: `${process.env.APP_NAME}/product/${folderId}`,
         },
       );
       image = { secure_url, public_id };
@@ -177,7 +121,6 @@ export class ProductService {
     if (files?.gallery?.length) {
       gallery = await this.cloudService.uploadFiles(files.gallery, {
         folder: `${process.env.APP_NAME}/category/${product.categoryId['folderId']}/product/${product.folderId}/gallery`,
-        // folder: `${process.env.APP_NAME}/product/${folderId}`,
       });
     }
     let finalPrice: number = product.finalPrice;
@@ -195,8 +138,6 @@ export class ProductService {
         gallery,
         finalPrice,
         updatedBy: user._id,
-        // ...(image && { image }), // إضافة image فقط لو موجود
-        // ...(gallery.length && { gallery }), // إضافة gallery فقط لو موجود
       },
     });
     if (updatedProduct.modifiedCount && files?.image?.length) {
@@ -209,9 +150,6 @@ export class ProductService {
     ) {
       const ids = product.gallery.map((ele) => ele.public_id);
       await this.cloudService.destroyFiles(ids);
-      // this.cloudService.destroyFolderAssets(
-      //   `${process.env.APP_NAME}/category/${product.categoryId['folderId']}/product/${product.folderId}/galler/`,
-      // );
     }
     return { message: 'Product updated successfully' };
   }
@@ -224,10 +162,8 @@ export class ProductService {
     let cacheName = 'products';
     if (Object.keys(query)?.length) {
       cacheName = JSON.stringify(query);
-      
     }
-    // const cacheName = query ? JSON.stringify(query) : 'all';
-    let cacheData = await this.cacheManager.get(cacheName);
+    const cacheData = await this.cacheManager.get(cacheName);
     console.log({ cacheName: cacheName, cacheData: cacheData });
     if (cacheData) {
       return {
@@ -249,7 +185,7 @@ export class ProductService {
       filter.categoryId = query.categoryId;
     }
     if (query.minPrice || query.maxPrice) {
-      let max = query.maxPrice ? { $lte: query.maxPrice } : {};
+      const max = query.maxPrice ? { $lte: query.maxPrice } : {};
       filter.finalPrice = { $gte: query.minPrice || 0, ...max };
     }
     const products = await this.productRepositoryService.find({
@@ -259,8 +195,12 @@ export class ProductService {
       sort: query.sort,
       populate: [{ path: 'categoryId' }],
     });
-    const z = await this.cacheManager.set(cacheName, JSON.stringify(products),1000*60);
-    console.log({z});
+    const z = await this.cacheManager.set(
+      cacheName,
+      JSON.stringify(products),
+      1000 * 60,
+    );
+    console.log({ z });
     return { message: 'Done', data: { products } };
   }
   async all(): Promise<{

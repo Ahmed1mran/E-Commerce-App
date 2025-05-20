@@ -9,16 +9,10 @@ export enum OrderStatus {
   delivered = 'delivered',
   cancelled = 'cancelled',
   accepted = 'accepted',
-  // rejected = 'rejected',
 }
 export enum PaymentMethod {
   cash = 'cash',
   Card = 'card',
-  // paypal = 'paypal',
-  // stripe = 'stripe',
-  // bankTransfer = 'bank_transfer',
-  // applePay = 'apple_pay',
-  // googlePay = 'google_pay',
 }
 
 export interface IOrderProduct {
@@ -28,8 +22,6 @@ export interface IOrderProduct {
   quantity: number;
   unitPrice: number;
   finalPrice: number;
-
-  // product: Types.ObjectId;
 }
 export interface IOrderInputs {
   address: string;
@@ -43,7 +35,7 @@ export interface IOrder extends IOrderInputs {
   orderId: string;
 
   createdBy: Types.ObjectId | IUser;
-  updatedBy?: Types.ObjectId | IUser ;
+  updatedBy?: Types.ObjectId | IUser;
 
   createdAt?: Date;
   updatedAt?: Date;

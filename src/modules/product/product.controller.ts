@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UsePipes,
   ValidationPipe,
   UseInterceptors,
@@ -54,7 +53,6 @@ export class ProductController {
   ) {
     console.log(user, body, files);
     return this.productService.create(user, body, files);
-    // return this.productService.create(CreateProductDto);
   }
   @UseInterceptors(
     FileFieldsInterceptor(
@@ -90,12 +88,7 @@ export class ProductController {
     return this.productService.all();
   }
   @CacheKey('events')
-  // @CacheTTL(5000)
   @UseInterceptors(CacheInterceptor)
-  @Get('test')
-  test() {
-    return this.productService.test();
-  }
   @Get('final')
   final() {
     return this.productService.final();

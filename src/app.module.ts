@@ -33,12 +33,12 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       context: ({ req }) => ({ req }), // <== مهم جدًا
-        debug: true,
-  playground: true, // لو بتحب تشتغل من المتصفح
+      debug: true,
+      playground: true, // لو بتحب تشتغل من المتصفح
       formatError: (error) => {
         console.error('GraphQL Error:', error);
         return error;
-      }
+      },
     }),
     CacheModule.registerAsync({
       isGlobal: true,

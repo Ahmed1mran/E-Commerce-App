@@ -1,34 +1,3 @@
-// import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-// import { GqlExecutionContext } from '@nestjs/graphql';
-// import { UserDocument } from 'src/DB/model/User.model';
-// // import { UserDocument } from 'src/DB/model/User.model';
-
-// export const User = createParamDecorator(
-//   (data: unknown, ctx: ExecutionContext) => {
-//     let user: UserDocument;
-//     switch (ctx['contextType']) {
-//       case 'http': {
-//         user = ctx.switchToHttp().getRequest().user;
-//         break;
-//       }
-//       case 'graphql': {
-//         user = GqlExecutionContext.create(ctx).getContext().req?.user;
-//         break;
-      
-//       }
-//       case 'ws': {
-//         user = ctx.switchToWs().getClient().user;
-//         break;
-//       }
-//       default: {
-//         throw new Error('Unknown context type');
-//       }
-//     }
-
-//     return user;
-//   },
-// );
-//////////////////////////////////////////////////////////////////
 import {
   createParamDecorator,
   ExecutionContext,

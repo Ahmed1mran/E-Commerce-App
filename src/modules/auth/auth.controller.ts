@@ -1,18 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  Param,
-  // ParseEnumPipe,
-  // ParseIntPipe,
-  Post,
-  UsePipes,
-  // PipeTransform,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, UsePipes } from '@nestjs/common';
 import { AuthenticationService } from './auth.service';
-import { CreateAccountDto, LoginDto } from './dto/auth.dto';
+import { ConfirmEmailDto, CreateAccountDto, LoginDto } from './dto/auth.dto';
 import { CustomValidationPipe } from 'src/common/pipes/custom.pipe';
 import { MinLength } from 'class-validator';
 
@@ -20,7 +8,6 @@ export class CreateAccountParamDTO {
   @MinLength(2)
   id: string;
 }
-
 @UsePipes(
   new CustomValidationPipe({
     whitelist: true,
@@ -38,6 +25,15 @@ export class AuthenticationController {
     body: CreateAccountDto,
   ) {
     return this.authenticationService.signup(body);
+  }
+  @Post('confirm-email')
+  confirmEmail(@Body() body: ConfirmEmailDto) {
+    return this.authenticationService.confirmEmail(body);
+  }
+
+  @Post('resend-otp')
+  resendOtp(@Body('email') email: string) {
+    return this.authenticationService.resendConfirmEmailOTP(email);
   }
   @HttpCode(200)
   @Post('login')

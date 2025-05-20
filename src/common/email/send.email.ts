@@ -10,14 +10,14 @@ export const sendEmail = async (data: SendMailOptions) => {
     if (!data.to && !data.bcc && !data.cc) {
       throw new BadGatewayException('In-valid email destination');
     }
-    
+
     if (!data.text && !data.html && !data.attachments?.length) {
       throw new BadGatewayException('In-valid email content');
     }
-    
+
     const transporter: Transporter = createTransport({
       host: 'smtp.gmail.email',
-      service: 'gmail', 
+      service: 'gmail',
       port: 587,
       secure: false,
       auth: {

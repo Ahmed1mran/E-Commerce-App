@@ -53,9 +53,8 @@ export class FindProductFilter extends QueryFilterDto {
   @IsNumber()
   @IsPositive()
   @IsOptional()
-    
   stock: number;
-  
+
   @IsMongoId()
   @IsOptional()
   categoryId?: string;

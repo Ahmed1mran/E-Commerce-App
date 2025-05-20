@@ -77,9 +77,7 @@ export class Order implements IOrder {
         unitPrice: { type: Number, required: true },
         finalPrice: {
           type: Number,
-          // default: function (this: IOrderProduct) {
-          //   return this.quantity * this.unitPrice;
-          // },
+
           required: true,
         },
       },

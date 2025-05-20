@@ -1,6 +1,4 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Request } from 'express';
-import { OrderDocument } from 'src/DB/model/Order.model';
 import { OrderRepositoryService } from 'src/DB/repository/Order.repository.service';
 import { OrderStatus } from 'src/modules/order/order.interface';
 import Stripe from 'stripe';
@@ -10,7 +8,7 @@ export class paymentSercvice {
   private stripe: Stripe;
 
   constructor(
-    private readonly orderRepositoryService: OrderRepositoryService<OrderDocument>,
+    private readonly orderRepositoryService: OrderRepositoryService,
   ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET as string);
   }
@@ -46,7 +44,7 @@ export class paymentSercvice {
   }
 
   async webhook(req: any) {
-    let body = req.body;
+    const body = req.body;
     console.log('body');
     console.log({ body });
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -138,7 +136,6 @@ export class paymentSercvice {
   }
   async confirmPaymentIntent(
     id: string,
-    // params: Stripe.PaymentIntentConfirmParams,
   ): Promise<Stripe.Response<Stripe.PaymentIntent>> {
     const intent = await this.retrievePaymentIntent(id);
     if (!intent) {
@@ -153,13 +150,10 @@ export class paymentSercvice {
     }
     return paymentIntent;
   }
-  async refund(
-    id: string,
-    // params: Stripe.PaymentIntentConfirmParams,
-  ): Promise<Stripe.Response<Stripe.Refund>> {
+  async refund(id: string): Promise<Stripe.Response<Stripe.Refund>> {
     const refund = await this.stripe.refunds.create({
       payment_intent: id,
-    })
+    });
     return refund;
   }
 }

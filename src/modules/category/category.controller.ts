@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -15,12 +14,7 @@ import {
 import { CategoryService } from './category.service';
 import { RoleTypes, UserDocument } from 'src/DB/model/User.model';
 import { Auth } from 'src/common/decorators/auth.decorator';
-import { AuthenticationGuard } from 'src/common/guard/authentication/authentication.guard';
-import { AuthorizationGuard } from 'src/common/guard/authorization/authorization.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { resolve } from 'path';
-import { localMulterOptions } from 'src/common/multer/multer.options';
 import {
   attachmentValidation,
   multerCloudOptions,
@@ -28,7 +22,11 @@ import {
 import { CreateCategoryDto } from './dto/create.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { MulterValidationInterceptor } from 'src/common/multer/multer-validation/multer-validation.interceptor';
-import { CategoryFilterQueryDto, CategoryId, updateCategoryDto } from './dto/update.dto';
+import {
+  CategoryFilterQueryDto,
+  CategoryId,
+  updateCategoryDto,
+} from './dto/update.dto';
 @UsePipes(new ValidationPipe({ whitelist: true }))
 @Controller('category')
 export class CategoryController {
@@ -44,7 +42,6 @@ export class CategoryController {
     ),
     MulterValidationInterceptor,
   )
-  // @Auth([RoleTypes.admin])
   @Post()
   create(
     @User() user: UserDocument,
@@ -63,9 +60,7 @@ export class CategoryController {
         fileSize: 1024 * 1024 * 10,
       }),
     ),
-    // MulterValidationInterceptor,
   )
-  // @Auth([RoleTypes.admin])
   @Patch(':categoryId')
   update(
     @User() user: UserDocument,
@@ -78,14 +73,12 @@ export class CategoryController {
   @Get(':categoryId')
   findById(
     @Param() params: CategoryId,
-    @UploadedFile() file?: Express.Multer.File,
+    @UploadedFile() _file?: Express.Multer.File,
   ) {
     return this.categoryService.findById(params.categoryId);
   }
   @Get()
-  find(
-    @Query() query:CategoryFilterQueryDto
-  ) {
+  find(@Query() query: CategoryFilterQueryDto) {
     return this.categoryService.find(query);
   }
 }

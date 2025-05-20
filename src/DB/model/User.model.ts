@@ -5,7 +5,7 @@ import {
   SchemaFactory,
   Virtual,
 } from '@nestjs/mongoose';
-import { HydratedDocument, Mongoose } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { generateHash } from 'src/common/pipes/security/hash.security';
 
 export enum GenderTypes {
@@ -56,43 +56,36 @@ export class User {
   phone: string;
 
   @Prop({ type: Date })
-  confirmEmail: Date;
-  
-  @Prop({ type: String })
-  confirmEmailOTP: string;
-  
-  @Prop({ type: Date })
   DOB: Date;
 
   @Prop({ type: Date })
   changeCredentialTime: Date;
 
-  @Prop()
-  otp: string;
+  @Prop({ type: Date, default: null })
+  confirmEmail: Date | null;
 
-  // confirm:
+  @Prop({ type: String, default: null })
+  confirmEmailOTP: string | null;
+
+  @Prop({ type: Date })
+  otpCreatedAt: Date;
 }
 export type UserDocument = HydratedDocument<User>;
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// UserSchema.pre('save', function (next) {
-//   if (this.isDirectModified('password')) {
-//     this.password = generateHash(this.password);
-//   }
-//   return next();
-// });
 export const UserModel = MongooseModule.forFeatureAsync([
   {
     name: User.name,
     imports: [],
     useFactory() {
-      // const schema = UserSchema;
       UserSchema.pre('save', function (next) {
         if (this.isDirectModified('password')) {
           this.password = generateHash(this.password);
         }
-        if (this.isDirectModified('otp')) {
-          this.otp = generateHash(this.otp);
+        if (this.isDirectModified('confirmEmailOTP')) {
+          if (this.confirmEmailOTP) {
+            this.confirmEmailOTP = generateHash(this.confirmEmailOTP);
+          }
         }
         return next();
       });
@@ -100,9 +93,5 @@ export const UserModel = MongooseModule.forFeatureAsync([
     },
   },
 ]);
-
-// export const UserModel = MongooseModule.forFeature([
-//   { name: User.name, schema: UserSchema },
-// ]);
 
 export const connectedUsers = new Map();

@@ -1,13 +1,11 @@
-import { Args, Mutation, Query, Resolver,  } from "@nestjs/graphql";
-import { OrderService } from "./order.service";
-import { OneOrderResponse } from "./entities/order.entity";
-import { FilterOrderDto } from "./dto/update-order.dto";
-import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
-import { AuthenticationGuard } from "src/common/guard/authentication/authentication.guard";
-import { Auth } from "src/common/decorators/auth.decorator";
-import { RoleTypes, UserDocument } from "src/DB/model/User.model";
-import { User } from "src/common/decorators/user.decorator";
-
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { OrderService } from './order.service';
+import { OneOrderResponse } from './entities/order.entity';
+import { FilterOrderDto } from './dto/update-order.dto';
+import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { Auth } from 'src/common/decorators/auth.decorator';
+import { RoleTypes, UserDocument } from 'src/DB/model/User.model';
+import { User } from 'src/common/decorators/user.decorator';
 
 @UsePipes(new ValidationPipe({ whitelist: true }))
 @Resolver()
@@ -24,8 +22,8 @@ export class OrderResolver {
     @User() user: UserDocument,
     @Args('filterOrder', { nullable: true }) filterOrderDto?: FilterOrderDto,
   ) {
-    console.log({user});
+    console.log({ user });
     console.log(filterOrderDto);
     return this.orderService.findAll();
   }
-}   
+}

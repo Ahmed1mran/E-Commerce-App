@@ -5,8 +5,7 @@ import {
   Schema,
   SchemaFactory,
 } from '@nestjs/mongoose';
-import { MaxLength, MinLength } from 'class-validator';
-import { Document, HydratedDocument, ObjectId, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import slugify from 'slugify';
 import { IAttachmentTypes } from 'src/common/multer/cloud.service';
 import { IProduct, Size } from 'src/modules/product/product.interface';
@@ -91,14 +90,13 @@ export class Product implements IProduct {
 
   @Prop({ type: Array<Size> })
   size?: Size[];
-  @Prop({ type: Array<String> })
+  @Prop({ type: Array<string> })
   colors?: string[];
 }
 export type ProductDocument = HydratedDocument<Product>;
 export const ProductSchema = SchemaFactory.createForClass(Product);
 export const ProductModel = MongooseModule.forFeatureAsync([
   {
-    // name: 'Product',
     name: Product.name,
     imports: [],
     useFactory() {

@@ -4,7 +4,6 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
   ValidationArguments,
-  MinLength,
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'match-password ', async: false })
@@ -14,7 +13,7 @@ export class IsMatchPasswordConstraint implements ValidatorConstraintInterface {
 
     return args.object[args.constraints[0]] == value;
   }
-  defaultMessage(validationArguments?: ValidationArguments): string {
+  defaultMessage(_validationArguments?: ValidationArguments): string {
     return 'password misMatch c-password';
   }
 }
@@ -22,7 +21,7 @@ export function IsMatchPassword(
   matchWith: string,
   validationOptions?: ValidationOptions,
 ) {
-  return function (object: Object, propertyName: string) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
       propertyName: propertyName,

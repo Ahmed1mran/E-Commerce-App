@@ -1,33 +1,28 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { UserDocument } from 'src/DB/model/User.model';
 import { CartRepositoryService } from 'src/DB/repository/Cart.repository.service';
-import { CartDocument } from 'src/DB/model/Cart.model';
+import { IOrderProduct, OrderStatus, PaymentMethod } from './order.interface';
 import {
-  IOrder,
-  IOrderProduct,
-  OrderStatus,
-  PaymentMethod,
-} from './order.interface';
-import { ProductRepositoryService, ProductsPopulateList } from 'src/DB/repository/Product.repository.service copy';
-import { Product, ProductDocument } from 'src/DB/model/Product.model';
+  ProductRepositoryService,
+  ProductsPopulateList,
+} from 'src/DB/repository/Product.repository.service copy';
 import { OrderRepositoryService } from 'src/DB/repository/Order.repository.service';
-import { OrderDocument } from 'src/DB/model/Order.model';
 import { CartService } from '../cart/cart.service';
 import { Types } from 'mongoose';
 import { paymentSercvice } from 'src/common/service/payment.Service';
-// import { Order } from './entities/order.entity';
 import Stripe from 'stripe';
 import { Request } from 'express';
 import { RealTimeGateWay } from '../gateway/gateway';
+import { UserRepositoryService } from 'src/DB/repository/User.repository.service';
 
 @Injectable()
 export class OrderService {
   constructor(
-    private readonly cartRepositoryService: CartRepositoryService<CartDocument>,
-    private readonly productRepositoryService: ProductRepositoryService<ProductDocument>,
-    private readonly orderRepositoryService: OrderRepositoryService<OrderDocument>,
+    private readonly cartRepositoryService: CartRepositoryService,
+    private readonly productRepositoryService: ProductRepositoryService,
+    private readonly orderRepositoryService: OrderRepositoryService,
+    private readonly userRepositoryService: UserRepositoryService,
     private readonly cartService: CartService,
     private paymentService: paymentSercvice,
     private realTimeGateWay: RealTimeGateWay,
@@ -36,18 +31,23 @@ export class OrderService {
     user: UserDocument,
     body: CreateOrderDto,
   ): Promise<{ message: string }> {
+    const existingUser = await this.userRepositoryService.findOne({
+      filter: { _id: user._id },
+    });
+    if (!existingUser) {
+      throw new BadRequestException('User not found');
+    }
+    if (!existingUser.confirmEmail) {
+      throw new BadRequestException('Email is not confirmed');
+    }
     const cart = await this.cartRepositoryService.findOne({
       filter: { createdBy: user._id },
     });
     if (!cart?.products?.length) {
       throw new BadRequestException('Cart not found or empty');
     }
-    // if (cart.items.length === 0) {
-    // }
-    // return { message: 'This action adds a new order' };
-
     let subTotal: number = 0;
-    let products: IOrderProduct[] = [];
+    const products: IOrderProduct[] = [];
     for (const product of cart.products) {
       const checkProduct = await this.productRepositoryService.findOne({
         filter: {
@@ -75,7 +75,7 @@ export class OrderService {
         subTotal - (body.discountPercent / 100) * subTotal,
       );
     }
-    const order = await this.orderRepositoryService.create({
+     await this.orderRepositoryService.create({
       ...body,
       subTotal,
       discountAmount: body.discountPercent,
@@ -84,14 +84,14 @@ export class OrderService {
       finalPrice,
     });
 
-    // await this.cartService.clearCart(user);
+    await this.cartService.clearCart(user);
 
     interface ProductStock {
       productId: Types.ObjectId;
       stock: number;
     }
 
-    let productsStock: ProductStock[] = [];
+    const productsStock: ProductStock[] = [];
 
     for (const product of products) {
       const item = await this.productRepositoryService.findOneAndUpdate({
@@ -128,8 +128,7 @@ export class OrderService {
     if (!order) {
       throw new BadRequestException('In-Valid order');
     }
-    // let discounts = [];
-    let discounts = [] as Array<{ coupon: string }>;
+    const discounts = [] as Array<{ coupon: string }>;
 
     if (order.discountAmount) {
       const coupon = await this.paymentService.createCoupon({
@@ -232,7 +231,6 @@ export class OrderService {
 
   async findAll(): Promise<any> {
     const orders = await this.orderRepositoryService.find({
-      // filter:{}
       populate: [
         { path: 'createdBy' },
         {
@@ -241,7 +239,6 @@ export class OrderService {
         },
       ],
     });
-    // console.log(orders);
     return orders;
   }
 }

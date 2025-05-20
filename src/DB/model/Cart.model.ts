@@ -5,7 +5,7 @@ import {
   Schema,
   SchemaFactory,
 } from '@nestjs/mongoose';
-import {  HydratedDocument, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { ICart, ICartProduct } from 'src/modules/cart/cart.interface';
 
 @Schema({
@@ -15,10 +15,12 @@ import { ICart, ICartProduct } from 'src/modules/cart/cart.interface';
 })
 export class Cart implements ICart {
   @Prop(
-    raw([{
-      productId: { type: Types.ObjectId, required: true, ref: 'Product' },
-      quantity: { type: Number, default: 1 },
-    }]),
+    raw([
+      {
+        productId: { type: Types.ObjectId, required: true, ref: 'Product' },
+        quantity: { type: Number, default: 1 },
+      },
+    ]),
   )
   products: ICartProduct[];
 
